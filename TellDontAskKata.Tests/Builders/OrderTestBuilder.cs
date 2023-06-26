@@ -9,8 +9,8 @@ public class OrderTestBuilder
 
     private OrderTestBuilder()
     {
-        _orderId = 1;
-        _orderStatus = OrderStatus.Created;
+        _orderId = OrderDefaults.Id;
+        _orderStatus = OrderDefaults.Status;
     }
 
     public static OrderTestBuilder Order()
