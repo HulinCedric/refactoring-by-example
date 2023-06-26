@@ -17,11 +17,10 @@ namespace TellDontAskKata.Tests.UseCase
             _useCase = new OrderApprovalUseCase(_orderRepository);
         }
 
-
         [Fact]
         public void ApprovedExistingOrder()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Created).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
            
             _orderRepository.AddOrder(initialOrder);
 
@@ -41,7 +40,7 @@ namespace TellDontAskKata.Tests.UseCase
         public void RejectedExistingOrder()
         {
             // use builder
-            var initialOrder = Order().WithStatus(OrderStatus.Created).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
                 
             _orderRepository.AddOrder(initialOrder);
 
@@ -61,7 +60,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void CannotApproveRejectedOrder()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Rejected).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -81,7 +80,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void CannotRejectApprovedOrder()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Approved).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -101,7 +100,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void ShippedOrdersCannotBeRejected()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Shipped).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -110,7 +109,6 @@ namespace TellDontAskKata.Tests.UseCase
                 OrderId = 1,
                 Approved = false
             };
-
 
             var actionToTest = () => _useCase.Run(request);
 

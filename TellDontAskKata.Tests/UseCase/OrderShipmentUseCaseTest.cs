@@ -23,7 +23,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void ShipApprovedOrder()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Approved).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -41,7 +41,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void CreatedOrdersCannotBeShipped()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Created).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -60,7 +60,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void RejectedOrdersCannotBeShipped()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Rejected).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -79,7 +79,7 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void ShippedOrdersCannotBeShippedAgain()
         {
-            var initialOrder = Order().WithStatus(OrderStatus.Shipped).Build();
+            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
 
             _orderRepository.AddOrder(initialOrder);
 

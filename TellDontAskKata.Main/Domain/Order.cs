@@ -8,9 +8,14 @@ namespace TellDontAskKata.Main.Domain;
 
 public class Order
 {
-    public Order()
+    private Order() : this(1, OrderStatus.Created)
     {
-        Status = OrderStatus.Created;
+    }
+
+    public Order(int id, OrderStatus status)
+    {
+        Id = id;
+        Status = status;
         Items = new List<OrderItem>();
         Currency = "EUR";
         Total = 0m;
@@ -18,7 +23,7 @@ public class Order
     }
 
     public string Currency { get; }
-    public int Id { get; init; }
+    public int Id { get; }
     public IList<OrderItem> Items { get; }
     public OrderStatus Status { get; set; }
     public decimal Tax { get; private set; }
