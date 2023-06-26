@@ -20,7 +20,7 @@ public class OrderCreationUseCase
         _productCatalog = productCatalog;
     }
 
-    public Either<UnknownProductException, Order> Run(List<CreateOrderItem> items)
+    public Either<UnknownProduct, Order> Run(List<CreateOrderItem> items)
         => CreateOrder(_productCatalog, items)
             .Map(order => _orderRepository.Save(order));
 }

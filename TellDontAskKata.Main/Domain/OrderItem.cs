@@ -28,11 +28,11 @@ public class OrderItem
             product: product,
             quantity: item.Quantity);
 
-    public static Either<UnknownProductException, OrderItem> NewOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
+    public static Either<UnknownProduct, OrderItem> NewOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
     {
         var product = productCatalog.GetByName(item.Name);
         if (product == null)
-            return new UnknownProductException();
+            return new UnknownProduct(item.Name);
 
         return CreateOrderItem(item, product);
     }

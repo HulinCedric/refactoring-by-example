@@ -44,7 +44,7 @@ public class Order
         return this;
     }
 
-    public static Either<UnknownProductException, Order> CreateOrder(
+    public static Either<UnknownProduct, Order> CreateOrder(
         IProductCatalog productCatalog,
         List<CreateOrderItem> itemRequests)
     {
@@ -54,21 +54,21 @@ public class Order
                    ToSuccess(orderItems);
     }
 
-    private static Order ToSuccess(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+    private static Order ToSuccess(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
         => orderItems.Rights()
             .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
 
-    private static Either<UnknownProductException, OrderItem>[] ToOrderItems(
+    private static Either<UnknownProduct, OrderItem>[] ToOrderItems(
         IProductCatalog productCatalog,
         IEnumerable<CreateOrderItem> itemRequests)
         => itemRequests
             .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
             .ToArray();
 
-    private static UnknownProductException ToFailure(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+    private static UnknownProduct ToFailure(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
         => orderItems.Lefts().First();
 
-    private static bool ContainFailure(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+    private static bool ContainFailure(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
         => orderItems.Lefts().Any();
 
     public void Approve(OrderApprovalRequest request)

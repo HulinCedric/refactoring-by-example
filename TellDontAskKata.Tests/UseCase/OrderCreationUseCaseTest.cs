@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using FluentAssertions;
 using FluentAssertions.LanguageExt;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Domain;
@@ -89,8 +88,6 @@ public class OrderCreationUseCaseTest
 
         _useCase.Run(items)
             .Should()
-            .BeLeft(
-                error =>
-                    error.Should().BeOfType<UnknownProductException>());
+            .Be(new UnknownProduct("unknown product"));
     }
 }
