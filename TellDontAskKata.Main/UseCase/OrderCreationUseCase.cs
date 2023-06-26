@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TellDontAskKata.Main.Commands;
+using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.Order;
 using static TellDontAskKata.Main.Domain.OrderItem;
@@ -31,9 +32,7 @@ public class OrderCreationUseCase
             
             var orderItem = CreateOrderItem(item, product);
 
-            order.Items.Add(orderItem);
-            order.Total += orderItem.TaxedAmount;
-            order.Tax += orderItem.Tax;
+            order.AddItem(orderItem);
         }
 
         _orderRepository.Save(order);

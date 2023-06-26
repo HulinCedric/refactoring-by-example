@@ -17,10 +17,16 @@ public class Order
     public int Id { get; init; }
     public IList<OrderItem> Items { get; }
     public OrderStatus Status { get; set; }
-    public decimal Tax { get; set; }
-
-    public decimal Total { get; set; }
+    public decimal Tax { get; private set; }
+    public decimal Total { get; private set; }
 
     public static Order CreateOrder()
         => new();
+
+    public void AddItem(OrderItem orderItem)
+    {
+        Items.Add(orderItem);
+        Total += orderItem.TaxedAmount;
+        Tax += orderItem.Tax;
+    }
 }
