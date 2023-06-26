@@ -7,8 +7,8 @@ public class OrderItem
 {
     private OrderItem(Product product, int quantity)
     {
-        var unitaryTax = Round(product.Price / 100m * product.Category.TaxPercentage);
-        var unitaryTaxedAmount = Round(product.Price + unitaryTax);
+        var unitaryTax = GetUnitaryTax(product);
+        var unitaryTaxedAmount = GetUnitaryTaxedAmount(product, unitaryTax);
 
         Product = product;
         Quantity = quantity;
@@ -20,6 +20,12 @@ public class OrderItem
     public int Quantity { get; }
     public decimal Tax { get; }
     public decimal TaxedAmount { get; }
+
+    private static decimal GetUnitaryTaxedAmount(Product product, decimal unitaryTax)
+        => Round(product.Price + unitaryTax);
+
+    private static decimal GetUnitaryTax(Product product)
+        => Round(product.Price / 100m * product.Category.TaxPercentage);
 
     public static OrderItem CreateOrderItem(CreateOrderItem item, Product product)
         => new(
