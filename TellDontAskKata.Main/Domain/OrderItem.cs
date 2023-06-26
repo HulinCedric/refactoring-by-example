@@ -1,4 +1,5 @@
 ﻿using TellDontAskKata.Main.Commands;
+using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.UseCase;
 
 namespace TellDontAskKata.Main.Domain;
@@ -25,4 +26,13 @@ public class OrderItem
         => new(
             product: product,
             quantity: item.Quantity);
+
+    public static OrderItem NewOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
+    {
+        var product = productCatalog.GetByName(item.Name);
+        if (product == null)
+            throw new UnknownProductException();
+
+        return CreateOrderItem(item, product);
+    }
 }

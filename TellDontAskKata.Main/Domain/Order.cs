@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
-using TellDontAskKata.Main.UseCase;
+using static TellDontAskKata.Main.Domain.OrderItem;
 
 namespace TellDontAskKata.Main.Domain;
 
@@ -23,7 +23,7 @@ public class Order
     public decimal Tax { get; private set; }
     public decimal Total { get; private set; }
 
-    public static Order New()
+    public static Order NewOrder()
         => new();
 
     public void AddItem(OrderItem orderItem)
@@ -35,18 +35,10 @@ public class Order
 
     public static Order CreateOrder(IProductCatalog productCatalog, List<CreateOrderItem> items)
     {
-        var order = Order.New();
+        var order = NewOrder();
 
         foreach (var item in items)
-        {
-            var product = productCatalog.GetByName(item.Name);
-            if (product == null)
-                throw new UnknownProductException();
-
-            var orderItem = OrderItem.CreateOrderItem(item, product);
-
-            order.AddItem(orderItem);
-        }
+            order.AddItem(NewOrderItem(productCatalog, item));
 
         return order;
     }

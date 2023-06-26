@@ -23,7 +23,7 @@ namespace TellDontAskKata.Tests.Doubles
 
         public Order CreateOrder(List<CreateOrderItem> items)
         {
-            var order = Order.New();
+            var order = Order.NewOrder();
 
             foreach (var item in items)
             {
