@@ -2,6 +2,7 @@
 using System.Linq;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
+using TellDontAskKata.Main.UseCase;
 using static TellDontAskKata.Main.Domain.OrderItem;
 
 namespace TellDontAskKata.Main.Domain;
@@ -45,4 +46,26 @@ public class Order
         => itemRequests
             .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
             .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
+
+    public void Approve(OrderApprovalRequest request)
+    {
+        if (Status == OrderStatus.Shipped)
+        {
+            throw new ShippedOrdersCannotBeChangedException();
+        }
+
+        if (request.Approved &&
+            Status == OrderStatus.Rejected)
+        {
+            throw new RejectedOrderCannotBeApprovedException();
+        }
+
+        if (!request.Approved &&
+            Status == OrderStatus.Approved)
+        {
+            throw new ApprovedOrderCannotBeRejectedException();
+        }
+
+        Status = request.Approved ? OrderStatus.Approved : OrderStatus.Rejected;
+    }
 }
