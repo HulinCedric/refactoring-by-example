@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using LanguageExt;
 using TellDontAskKata.Main.Commands;
+using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.Order;
 
@@ -18,10 +20,20 @@ public class OrderCreationUseCase
         _productCatalog = productCatalog;
     }
 
-    public void Run(List<CreateOrderItem> items)
+    public Either<UnknownProductException, Order> Run(List<CreateOrderItem> items)
     {
-        var order = CreateOrder(_productCatalog, items);
+        Order order;
+        try
+        {
+            order = CreateOrder(_productCatalog, items);
+        }
+        catch (UnknownProductException unknownProduct)
+        {
+            return unknownProduct;
+        }
 
         _orderRepository.Save(order);
+
+        return order;
     }
 }
