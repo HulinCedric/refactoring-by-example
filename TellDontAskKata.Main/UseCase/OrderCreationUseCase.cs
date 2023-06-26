@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using TellDontAskKata.Main.Commands;
-using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.Order;
-using static TellDontAskKata.Main.Domain.OrderItem;
 
 namespace TellDontAskKata.Main.UseCase;
 
@@ -22,18 +20,7 @@ public class OrderCreationUseCase
 
     public void Run(List<CreateOrderItem> items)
     {
-        var order = CreateOrder();
-
-        foreach (var item in items)
-        {
-            var product = _productCatalog.GetByName(item.Name);
-            if (product == null)
-                throw new UnknownProductException();
-            
-            var orderItem = CreateOrderItem(item, product);
-
-            order.AddItem(orderItem);
-        }
+        var order = CreateOrder(_productCatalog, items);
 
         _orderRepository.Save(order);
     }
