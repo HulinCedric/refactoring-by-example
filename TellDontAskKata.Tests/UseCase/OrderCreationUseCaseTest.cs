@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
+using FluentAssertions.LanguageExt;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
@@ -7,7 +8,6 @@ using TellDontAskKata.Main.UseCase;
 using TellDontAskKata.Tests.Doubles;
 using Xunit;
 using static Xunit.Assert;
-using FluentAssertions.LanguageExt;
 
 namespace TellDontAskKata.Tests.UseCase;
 
@@ -87,9 +87,10 @@ public class OrderCreationUseCaseTest
             new("unknown product", 0)
         };
 
-
-      _useCase.Run(items).Should().BeLeft();
-
-      //  Throws<UnknownProductException>(ActionToTest);
+        _useCase.Run(items)
+            .Should()
+            .BeLeft(
+                error =>
+                    error.Should().BeOfType<UnknownProductException>());
     }
 }
