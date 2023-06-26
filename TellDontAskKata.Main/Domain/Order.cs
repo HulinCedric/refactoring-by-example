@@ -27,7 +27,7 @@ public class Order
     public string Currency { get; }
     public int Id { get; }
     public IList<OrderItem> Items { get; }
-    public OrderStatus Status { get; set; }
+    public OrderStatus Status { get; private set; }
     public decimal Tax { get; private set; }
     public decimal Total { get; private set; }
 
