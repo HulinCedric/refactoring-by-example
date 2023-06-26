@@ -4,18 +4,13 @@ namespace TellDontAskKata.Main.Domain;
 
 public class Order
 {
-    // TODO Remove this constructor once refactoring is done
     public Order()
     {
-    }
-
-    private Order(OrderStatus status, IList<OrderItem> items, string currency, decimal total, decimal tax)
-    {
-        Status = status;
-        Items = items;
-        Currency = currency;
-        Total = total;
-        Tax = tax;
+        Status = OrderStatus.Created;
+        Items = new List<OrderItem>();
+        Currency = "EUR";
+        Total = 0m;
+        Tax = 0m;
     }
 
     public string Currency { get; }
@@ -27,10 +22,5 @@ public class Order
     public decimal Total { get; set; }
 
     public static Order CreateOrder()
-        => new(
-            status: OrderStatus.Created,
-            items: new List<OrderItem>(),
-            currency: "EUR",
-            total: 0m,
-            tax: 0m);
+        => new();
 }
