@@ -4,6 +4,7 @@ namespace TellDontAskKata.Main.Domain;
 
 public class Order
 {
+    // TODO Remove this constructor once refactoring is done
     public Order()
     {
     }

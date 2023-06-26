@@ -1,60 +1,36 @@
 ﻿using System.Collections.Generic;
-using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.Order;
-using static TellDontAskKata.Main.Domain.OrderStatus;
+using static TellDontAskKata.Main.Domain.OrderItem;
 
-namespace TellDontAskKata.Main.UseCase
+namespace TellDontAskKata.Main.UseCase;
+
+public class OrderCreationUseCase
 {
-    public class OrderCreationUseCase
+    private readonly IOrderRepository _orderRepository;
+    private readonly IProductCatalog _productCatalog;
+
+    public OrderCreationUseCase(
+        IOrderRepository orderRepository,
+        IProductCatalog productCatalog)
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IProductCatalog _productCatalog;
+        _orderRepository = orderRepository;
+        _productCatalog = productCatalog;
+    }
 
-        public OrderCreationUseCase(
-            IOrderRepository orderRepository,
-            IProductCatalog productCatalog)
+    public void Run(List<CreateOrderItem> items)
+    {
+        var order = CreateOrder();
+
+        foreach (var item in items)
         {
-            _orderRepository = orderRepository;
-            _productCatalog = productCatalog;
+            var orderItem = CreateOrderItem(_productCatalog, item);
+
+            order.Items.Add(orderItem);
+            order.Total += orderItem.TaxedAmount;
+            order.Tax += orderItem.Tax;
         }
 
-        public void Run(List<CreateOrderItem> items)
-        {
-            var order = CreateOrder();
-
-            foreach (var item in items)
-            {
-                var product = _productCatalog.GetByName(item.Name);
-
-                if (product == null)
-                {
-                    throw new UnknownProductException();
-                }
-
-                var unitaryTax = Round((product.Price / 100m) * product.Category.TaxPercentage);
-                var unitaryTaxedAmount = Round(product.Price + unitaryTax);
-                var taxedAmount = Round(unitaryTaxedAmount * item.Quantity);
-                var taxAmount = Round(unitaryTax * item.Quantity);
-
-                var orderItem = new OrderItem
-                {
-                    Product = product,
-                    Quantity = item.Quantity,
-                    Tax = taxAmount,
-                    TaxedAmount = taxedAmount
-                };
-                order.Items.Add(orderItem);
-                order.Total += taxedAmount;
-                order.Tax += taxAmount;
-            }
-
-            _orderRepository.Save(order);
-        }
-
-        private static decimal Round(decimal amount)
-        {
-            return decimal.Round(amount, 2, System.MidpointRounding.ToPositiveInfinity);
-        }
+        _orderRepository.Save(order);
     }
 }
