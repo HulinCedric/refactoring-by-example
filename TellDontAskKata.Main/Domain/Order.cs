@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.OrderItem;
@@ -26,19 +27,15 @@ public class Order
     public static Order NewOrder()
         => new();
 
-    public void AddItem(OrderItem orderItem)
+    public Order AddItem(OrderItem orderItem)
     {
         Items.Add(orderItem);
         Total += orderItem.TaxedAmount;
         Tax += orderItem.Tax;
+
+        return this;
     }
 
     public static Order CreateOrder(IProductCatalog productCatalog, List<CreateOrderItem> items)
-    {
-        var order = NewOrder();
-
-        items.ForEach(item => order.AddItem(NewOrderItem(productCatalog, item)));
-
-        return order;
-    }
+        => items.Aggregate(NewOrder(), (order, item) => order.AddItem(NewOrderItem(productCatalog, item)));
 }
