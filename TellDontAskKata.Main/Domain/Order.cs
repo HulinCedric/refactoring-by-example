@@ -37,8 +37,7 @@ public class Order
     {
         var order = NewOrder();
 
-        foreach (var item in items)
-            order.AddItem(NewOrderItem(productCatalog, item));
+        items.ForEach(item => order.AddItem(NewOrderItem(productCatalog, item)));
 
         return order;
     }
