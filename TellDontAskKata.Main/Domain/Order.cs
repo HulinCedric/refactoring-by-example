@@ -36,6 +36,8 @@ public class Order
         return this;
     }
 
-    public static Order CreateOrder(IProductCatalog productCatalog, List<CreateOrderItem> items)
-        => items.Aggregate(NewOrder(), (order, item) => order.AddItem(NewOrderItem(productCatalog, item)));
+    public static Order CreateOrder(IProductCatalog productCatalog, List<CreateOrderItem> itemRequests)
+        => itemRequests
+            .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
+            .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
 }
