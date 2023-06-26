@@ -2,6 +2,7 @@
 using System.Linq;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
+using TellDontAskKata.Main.Service;
 using TellDontAskKata.Main.UseCase;
 using static TellDontAskKata.Main.Domain.OrderItem;
 
@@ -67,5 +68,23 @@ public class Order
         }
 
         Status = request.Approved ? OrderStatus.Approved : OrderStatus.Rejected;
+    }
+
+    public void Ship(IShipmentService shipmentService)
+    {
+        if (Status == OrderStatus.Created ||
+            Status == OrderStatus.Rejected)
+        {
+            throw new OrderCannotBeShippedException();
+        }
+
+        if (Status == OrderStatus.Shipped)
+        {
+            throw new OrderCannotBeShippedTwiceException();
+        }
+
+        shipmentService.Ship(this);
+
+        Status = OrderStatus.Shipped;
     }
 }
