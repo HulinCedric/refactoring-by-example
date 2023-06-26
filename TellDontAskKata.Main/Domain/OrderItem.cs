@@ -6,10 +6,18 @@ namespace TellDontAskKata.Main.Domain;
 
 public class OrderItem
 {
-    public Product Product { get; private init; }
-    public int Quantity { get; private init; }
-    public decimal Tax { get; private init; }
-    public decimal TaxedAmount { get; private init; }
+    private OrderItem(Product product, int quantity, decimal tax, decimal taxedAmount)
+    {
+        Product = product;
+        Quantity = quantity;
+        Tax = tax;
+        TaxedAmount = taxedAmount;
+    }
+
+    public Product Product { get; }
+    public int Quantity { get; }
+    public decimal Tax { get; }
+    public decimal TaxedAmount { get; }
 
     public static OrderItem CreateOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
     {
@@ -23,13 +31,11 @@ public class OrderItem
         var taxedAmount = Round(unitaryTaxedAmount * item.Quantity);
         var taxAmount = Round(unitaryTax * item.Quantity);
 
-        return new OrderItem
-        {
-            Product = product,
-            Quantity = item.Quantity,
-            Tax = taxAmount,
-            TaxedAmount = taxedAmount
-        };
+        return new OrderItem(
+            product: product,
+            quantity: item.Quantity,
+            tax: taxAmount,
+            taxedAmount: taxedAmount);
     }
 
     private static decimal Round(decimal amount)
