@@ -11,7 +11,6 @@ namespace TellDontAskKata.Tests.UseCase
     public class OrderCreationUseCaseTest
     {
         private readonly TestOrderRepository _orderRepository;
-        private readonly IProductCatalog _productCatalog;
         private readonly OrderCreationUseCase _useCase;
 
         public OrderCreationUseCaseTest()
@@ -22,7 +21,7 @@ namespace TellDontAskKata.Tests.UseCase
                 TaxPercentage = 10m
             };
 
-            _productCatalog = new InMemoryProductCatalog(
+            IProductCatalog productCatalog = new InMemoryProductCatalog(
                 new List<Product>
                 {
                     new()
@@ -41,7 +40,7 @@ namespace TellDontAskKata.Tests.UseCase
 
             _orderRepository = new TestOrderRepository();
 
-            _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
+            _useCase = new OrderCreationUseCase(_orderRepository, productCatalog);
         }
 
 
@@ -82,9 +81,9 @@ namespace TellDontAskKata.Tests.UseCase
             };
 
 
-            void actionToTest() => _useCase.Run("john doe", items);
+            void ActionToTest() => _useCase.Run("john doe", items);
 
-            Throws<UnknownProductException>(actionToTest);
+            Throws<UnknownProductException>(ActionToTest);
         }
     }
 }
