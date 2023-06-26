@@ -1,5 +1,4 @@
 ﻿using System;
-using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.UseCase;
 
 namespace TellDontAskKata.Main.Domain;
@@ -19,12 +18,9 @@ public class OrderItem
     public decimal Tax { get; }
     public decimal TaxedAmount { get; }
 
-    public static OrderItem CreateOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
+    public static OrderItem CreateOrderItem(CreateOrderItem item, Product product)
     {
-        var product = productCatalog.GetByName(item.Name);
-
-        if (product == null)
-            throw new UnknownProductException();
+      
 
         var unitaryTax = Round(product.Price / 100m * product.Category.TaxPercentage);
         var unitaryTaxedAmount = Round(product.Price + unitaryTax);

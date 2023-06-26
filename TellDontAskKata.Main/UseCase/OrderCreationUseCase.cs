@@ -24,7 +24,11 @@ public class OrderCreationUseCase
 
         foreach (var item in items)
         {
-            var orderItem = CreateOrderItem(_productCatalog, item);
+            var product = _productCatalog.GetByName(item.Name);
+            if (product == null)
+                throw new UnknownProductException();
+            
+            var orderItem = CreateOrderItem(item, product);
 
             order.Items.Add(orderItem);
             order.Total += orderItem.TaxedAmount;
