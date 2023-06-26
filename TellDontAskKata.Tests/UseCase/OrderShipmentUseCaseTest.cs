@@ -2,6 +2,7 @@
 using TellDontAskKata.Main.UseCase;
 using TellDontAskKata.Tests.Doubles;
 using Xunit;
+using static TellDontAskKata.Tests.Builders.OrderShipmentRequestBuilder;
 using static TellDontAskKata.Tests.Builders.OrderTestBuilder;
 
 namespace TellDontAskKata.Tests.UseCase;
@@ -19,18 +20,14 @@ public class OrderShipmentUseCaseTest
         _useCase = new OrderShipmentUseCase(_orderRepository, _shipmentService);
     }
 
-
     [Fact]
     public void ShipApprovedOrder()
     {
-        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
+        var initialOrder = Order().WithStatus(OrderStatus.Approved).Build();
 
         _orderRepository.AddOrder(initialOrder);
 
-        var request = new OrderShipmentRequest
-        {
-            OrderId = 1
-        };
+        var request = OrderShipmentRequest().Build();
 
         _useCase.Run(request);
 
@@ -41,14 +38,12 @@ public class OrderShipmentUseCaseTest
     [Fact]
     public void CreatedOrdersCannotBeShipped()
     {
-        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
+        var initialOrder = Order().WithStatus(OrderStatus.Created).Build();
 
         _orderRepository.AddOrder(initialOrder);
 
-        var request = new OrderShipmentRequest
-        {
-            OrderId = 1
-        };
+        var request = OrderShipmentRequest().Build();
+
 
         var actionToTest = () => _useCase.Run(request);
 
@@ -60,14 +55,11 @@ public class OrderShipmentUseCaseTest
     [Fact]
     public void RejectedOrdersCannotBeShipped()
     {
-        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
+        var initialOrder = Order().WithStatus(OrderStatus.Rejected).Build();
 
         _orderRepository.AddOrder(initialOrder);
 
-        var request = new OrderShipmentRequest
-        {
-            OrderId = 1
-        };
+        var request = OrderShipmentRequest().Build();
 
         var actionToTest = () => _useCase.Run(request);
 
@@ -79,14 +71,11 @@ public class OrderShipmentUseCaseTest
     [Fact]
     public void ShippedOrdersCannotBeShippedAgain()
     {
-        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
+        var initialOrder = Order().WithStatus(OrderStatus.Shipped).Build();
 
         _orderRepository.AddOrder(initialOrder);
 
-        var request = new OrderShipmentRequest
-        {
-            OrderId = 1
-        };
+        var request = OrderShipmentRequest().Build();
 
         var actionToTest = () => _useCase.Run(request);
 
