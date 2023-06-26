@@ -1,3 +1,3 @@
-namespace TellDontAskKata.Main.UseCase;
+namespace TellDontAskKata.Main.Commands;
 
 public record CreateOrderItem(string Name, int Quantity);
