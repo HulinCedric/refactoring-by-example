@@ -2,28 +2,27 @@
 using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.Service;
 
-namespace TellDontAskKata.Main.UseCase
+namespace TellDontAskKata.Main.UseCase;
+
+public class OrderShipmentUseCase
 {
-    public class OrderShipmentUseCase
+    private readonly IOrderRepository _orderRepository;
+    private readonly IShipmentService _shipmentService;
+
+    public OrderShipmentUseCase(
+        IOrderRepository orderRepository,
+        IShipmentService shipmentService)
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IShipmentService _shipmentService;
+        _orderRepository = orderRepository;
+        _shipmentService = shipmentService;
+    }
 
-        public OrderShipmentUseCase(
-            IOrderRepository orderRepository,
-            IShipmentService shipmentService)
-        {
-            _orderRepository = orderRepository;
-            _shipmentService = shipmentService;
-        }
+    public void Run(OrderShipmentRequest request)
+    {
+        var order = _orderRepository.GetById(request.OrderId);
 
-        public void Run(OrderShipmentRequest request)
-        {
-            var order = _orderRepository.GetById(request.OrderId);
-
-            order.Ship(_shipmentService);
+        order.Ship(_shipmentService);
             
-            _orderRepository.Save(order);
-        }
+        _orderRepository.Save(order);
     }
 }

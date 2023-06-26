@@ -1,22 +1,15 @@
 ﻿using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Service;
 
-namespace TellDontAskKata.Tests.Doubles
+namespace TellDontAskKata.Tests.Doubles;
+
+public class TestShipmentService : IShipmentService
 {
-    public class TestShipmentService : IShipmentService
-    {
-        private Order _shippedOrder;
+    private Order _shippedOrder;
 
-        public void Ship(Order order)
-        {
-            _shippedOrder = order;
-        }
+    public void Ship(Order order)
+        => _shippedOrder = order;
 
-        public Order GetShippedOrder()
-        {
-            return _shippedOrder;
-        }
-
-
-    }
+    public Order GetShippedOrder()
+        => _shippedOrder;
 }

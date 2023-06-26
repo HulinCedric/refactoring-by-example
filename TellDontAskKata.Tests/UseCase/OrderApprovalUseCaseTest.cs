@@ -4,117 +4,114 @@ using TellDontAskKata.Tests.Doubles;
 using Xunit;
 using static TellDontAskKata.Tests.Builders.OrderTestBuilder;
 
-namespace TellDontAskKata.Tests.UseCase
+namespace TellDontAskKata.Tests.UseCase;
+
+public class OrderApprovalUseCaseTest
 {
-    public class OrderApprovalUseCaseTest
+    private readonly TestOrderRepository _orderRepository;
+    private readonly OrderApprovalUseCase _useCase;
+
+    public OrderApprovalUseCaseTest()
     {
-        private readonly TestOrderRepository _orderRepository;
-        private readonly OrderApprovalUseCase _useCase;
+        _orderRepository = new TestOrderRepository();
+        _useCase = new OrderApprovalUseCase(_orderRepository);
+    }
 
-        public OrderApprovalUseCaseTest()
+    [Fact]
+    public void ApprovedExistingOrder()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            _orderRepository = new TestOrderRepository();
-            _useCase = new OrderApprovalUseCase(_orderRepository);
-        }
+            OrderId = 1,
+            Approved = true
+        };
 
-        [Fact]
-        public void ApprovedExistingOrder()
+        _useCase.Run(request);
+
+        var savedOrder = _orderRepository.GetSavedOrder();
+        Assert.Equal(OrderStatus.Approved, savedOrder.Status);
+    }
+
+    [Fact]
+    public void RejectedExistingOrder()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
-           
-            _orderRepository.AddOrder(initialOrder);
+            OrderId = 1,
+            Approved = false
+        };
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+        _useCase.Run(request);
 
-            _useCase.Run(request);
+        var savedOrder = _orderRepository.GetSavedOrder();
+        Assert.Equal(OrderStatus.Rejected, savedOrder.Status);
+    }
 
-            var savedOrder = _orderRepository.GetSavedOrder();
-            Assert.Equal(OrderStatus.Approved, savedOrder.Status);
-        }
 
-        [Fact]
-        public void RejectedExistingOrder()
+    [Fact]
+    public void CannotApproveRejectedOrder()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            // use builder
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
-                
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            _useCase.Run(request);
-
-            var savedOrder = _orderRepository.GetSavedOrder();
-            Assert.Equal(OrderStatus.Rejected, savedOrder.Status);
-        }
+            OrderId = 1,
+            Approved = true
+        };
 
 
-        [Fact]
-        public void CannotApproveRejectedOrder()
+        var actionToTest = () => _useCase.Run(request);
+
+        Assert.Throws<RejectedOrderCannotBeApprovedException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
+    }
+
+    [Fact]
+    public void CannotRejectApprovedOrder()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
-
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+            OrderId = 1,
+            Approved = false
+        };
 
 
-            var actionToTest = () => _useCase.Run(request);
-      
-            Assert.Throws<RejectedOrderCannotBeApprovedException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-        }
+        var actionToTest = () => _useCase.Run(request);
 
-        [Fact]
-        public void CannotRejectApprovedOrder()
+        Assert.Throws<ApprovedOrderCannotBeRejectedException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
+    }
+
+    [Fact]
+    public void ShippedOrdersCannotBeRejected()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
+            OrderId = 1,
+            Approved = false
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        var actionToTest = () => _useCase.Run(request);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-
-            var actionToTest = () => _useCase.Run(request);
-            
-            Assert.Throws<ApprovedOrderCannotBeRejectedException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-        }
-
-        [Fact]
-        public void ShippedOrdersCannotBeRejected()
-        {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
-
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            var actionToTest = () => _useCase.Run(request);
-
-            Assert.Throws<ShippedOrdersCannotBeChangedException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-        }
-
+        Assert.Throws<ShippedOrdersCannotBeChangedException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
     }
 }

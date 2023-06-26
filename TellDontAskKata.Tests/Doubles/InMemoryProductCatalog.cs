@@ -5,38 +5,33 @@ using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.UseCase;
 
-namespace TellDontAskKata.Tests.Doubles
+namespace TellDontAskKata.Tests.Doubles;
+
+public class InMemoryProductCatalog : IProductCatalog
 {
-    public class InMemoryProductCatalog : IProductCatalog
+    private readonly IList<Product> _products;
+
+    public InMemoryProductCatalog(IList<Product> products)
+        => _products = products;
+
+    public Product GetByName(string name)
+        => _products.FirstOrDefault(p => p.Name == name);
+
+    public Order CreateOrder(List<CreateOrderItem> items)
     {
-        private readonly IList<Product> _products;
+        var order = Order.NewOrder();
 
-        public InMemoryProductCatalog(IList<Product> products)
+        foreach (var item in items)
         {
-            _products = products;
+            var product = GetByName(item.Name);
+            if (product == null)
+                throw new UnknownProductException();
+
+            var orderItem = OrderItem.CreateOrderItem(item, product);
+
+            order.AddItem(orderItem);
         }
 
-        public Product GetByName(string name)
-        {
-            return _products.FirstOrDefault(p => p.Name == name);
-        }
-
-        public Order CreateOrder(List<CreateOrderItem> items)
-        {
-            var order = Order.NewOrder();
-
-            foreach (var item in items)
-            {
-                var product = GetByName(item.Name);
-                if (product == null)
-                    throw new UnknownProductException();
-
-                var orderItem = OrderItem.CreateOrderItem(item, product);
-
-                order.AddItem(orderItem);
-            }
-
-            return order;
-        }
+        return order;
     }
 }

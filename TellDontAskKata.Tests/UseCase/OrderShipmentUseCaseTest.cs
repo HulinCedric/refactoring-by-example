@@ -4,97 +4,94 @@ using TellDontAskKata.Tests.Doubles;
 using Xunit;
 using static TellDontAskKata.Tests.Builders.OrderTestBuilder;
 
-namespace TellDontAskKata.Tests.UseCase
+namespace TellDontAskKata.Tests.UseCase;
+
+public class OrderShipmentUseCaseTest
 {
-    public class OrderShipmentUseCaseTest
+    private readonly TestOrderRepository _orderRepository;
+    private readonly TestShipmentService _shipmentService;
+    private readonly OrderShipmentUseCase _useCase;
+
+    public OrderShipmentUseCaseTest()
     {
-        private readonly TestOrderRepository _orderRepository;
-        private readonly TestShipmentService _shipmentService;
-        private readonly OrderShipmentUseCase _useCase;
+        _orderRepository = new TestOrderRepository();
+        _shipmentService = new TestShipmentService();
+        _useCase = new OrderShipmentUseCase(_orderRepository, _shipmentService);
+    }
 
-        public OrderShipmentUseCaseTest()
+
+    [Fact]
+    public void ShipApprovedOrder()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderShipmentRequest
         {
-            _orderRepository = new TestOrderRepository();
-            _shipmentService = new TestShipmentService();
-            _useCase = new OrderShipmentUseCase(_orderRepository, _shipmentService);
-        }
+            OrderId = 1
+        };
 
+        _useCase.Run(request);
 
-        [Fact]
-        public void ShipApprovedOrder()
+        Assert.Equal(OrderStatus.Shipped, _orderRepository.GetSavedOrder().Status);
+        Assert.Same(initialOrder, _shipmentService.GetShippedOrder());
+    }
+
+    [Fact]
+    public void CreatedOrdersCannotBeShipped()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderShipmentRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Approved).Build();
+            OrderId = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        var actionToTest = () => _useCase.Run(request);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        Assert.Throws<OrderCannotBeShippedException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
+        Assert.Null(_shipmentService.GetShippedOrder());
+    }
 
-            _useCase.Run(request);
+    [Fact]
+    public void RejectedOrdersCannotBeShipped()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
 
-            Assert.Equal(OrderStatus.Shipped, _orderRepository.GetSavedOrder().Status);
-            Assert.Same(initialOrder, _shipmentService.GetShippedOrder());
-        }
+        _orderRepository.AddOrder(initialOrder);
 
-        [Fact]
-        public void CreatedOrdersCannotBeShipped()
+        var request = new OrderShipmentRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Created).Build();
+            OrderId = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        var actionToTest = () => _useCase.Run(request);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        Assert.Throws<OrderCannotBeShippedException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
+        Assert.Null(_shipmentService.GetShippedOrder());
+    }
 
-            var actionToTest = () => _useCase.Run(request);
+    [Fact]
+    public void ShippedOrdersCannotBeShippedAgain()
+    {
+        var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
 
-            Assert.Throws<OrderCannotBeShippedException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-            Assert.Null(_shipmentService.GetShippedOrder());
-        }
+        _orderRepository.AddOrder(initialOrder);
 
-        [Fact]
-        public void RejectedOrdersCannotBeShipped()
+        var request = new OrderShipmentRequest
         {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Rejected).Build();
+            OrderId = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        var actionToTest = () => _useCase.Run(request);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
-
-            var actionToTest = () => _useCase.Run(request);
-
-            Assert.Throws<OrderCannotBeShippedException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-            Assert.Null(_shipmentService.GetShippedOrder());
-        }
-
-        [Fact]
-        public void ShippedOrdersCannotBeShippedAgain()
-        {
-            var initialOrder = Order().WithId(1).WithStatus(OrderStatus.Shipped).Build();
-
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
-
-            var actionToTest = () => _useCase.Run(request);
-
-            Assert.Throws<OrderCannotBeShippedTwiceException>(actionToTest);
-            Assert.Null(_orderRepository.GetSavedOrder());
-            Assert.Null(_shipmentService.GetShippedOrder());
-        }
-
-
+        Assert.Throws<OrderCannotBeShippedTwiceException>(actionToTest);
+        Assert.Null(_orderRepository.GetSavedOrder());
+        Assert.Null(_shipmentService.GetShippedOrder());
     }
 }
