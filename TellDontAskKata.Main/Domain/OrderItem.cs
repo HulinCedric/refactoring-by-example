@@ -1,4 +1,5 @@
-﻿using TellDontAskKata.Main.Commands;
+﻿using LanguageExt;
+using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.UseCase;
 
@@ -27,11 +28,11 @@ public class OrderItem
             product: product,
             quantity: item.Quantity);
 
-    public static OrderItem NewOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
+    public static Either<UnknownProductException, OrderItem> NewOrderItem(IProductCatalog productCatalog, CreateOrderItem item)
     {
         var product = productCatalog.GetByName(item.Name);
         if (product == null)
-            throw new UnknownProductException();
+            return new UnknownProductException();
 
         return CreateOrderItem(item, product);
     }

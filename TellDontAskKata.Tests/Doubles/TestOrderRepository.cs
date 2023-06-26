@@ -10,7 +10,7 @@ public class TestOrderRepository : IOrderRepository
     private Order _insertedOrder;
     private readonly IList<Order> _orders = new List<Order>();
 
-    public void Save(Order order)
+    public Order Save(Order order)
         => _insertedOrder = order;
 
     public Order GetById(int orderId)

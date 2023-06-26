@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using LanguageExt;
 using TellDontAskKata.Main.Commands;
 using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.Service;
@@ -43,29 +44,33 @@ public class Order
         return this;
     }
 
-    public static Order CreateOrder(IProductCatalog productCatalog, List<CreateOrderItem> itemRequests)
-        => itemRequests
+    public static Either<UnknownProductException, Order> CreateOrder(
+        IProductCatalog productCatalog,
+        List<CreateOrderItem> itemRequests)
+    {
+        var orderItems = itemRequests
             .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
+            .ToArray();
+
+        if (orderItems.Lefts().Any())
+            return orderItems.Lefts().First();
+
+        return orderItems.Rights()
             .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
+    }
 
     public void Approve(OrderApprovalRequest request)
     {
         if (Status == OrderStatus.Shipped)
-        {
             throw new ShippedOrdersCannotBeChangedException();
-        }
 
         if (request.Approved &&
             Status == OrderStatus.Rejected)
-        {
             throw new RejectedOrderCannotBeApprovedException();
-        }
 
         if (!request.Approved &&
             Status == OrderStatus.Approved)
-        {
             throw new ApprovedOrderCannotBeRejectedException();
-        }
 
         Status = request.Approved ? OrderStatus.Approved : OrderStatus.Rejected;
     }
@@ -74,14 +79,10 @@ public class Order
     {
         if (Status == OrderStatus.Created ||
             Status == OrderStatus.Rejected)
-        {
             throw new OrderCannotBeShippedException();
-        }
 
         if (Status == OrderStatus.Shipped)
-        {
             throw new OrderCannotBeShippedTwiceException();
-        }
 
         shipmentService.Ship(this);
 

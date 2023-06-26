@@ -21,19 +21,6 @@ public class OrderCreationUseCase
     }
 
     public Either<UnknownProductException, Order> Run(List<CreateOrderItem> items)
-    {
-        Order order;
-        try
-        {
-            order = CreateOrder(_productCatalog, items);
-        }
-        catch (UnknownProductException unknownProduct)
-        {
-            return unknownProduct;
-        }
-
-        _orderRepository.Save(order);
-
-        return order;
-    }
+        => CreateOrder(_productCatalog, items)
+            .Map(order => _orderRepository.Save(order));
 }
