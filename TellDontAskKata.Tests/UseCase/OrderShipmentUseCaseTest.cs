@@ -2,6 +2,7 @@
 using TellDontAskKata.Main.UseCase;
 using TellDontAskKata.Tests.Doubles;
 using Xunit;
+using static TellDontAskKata.Tests.Builders.OrderTestBuilder;
 
 namespace TellDontAskKata.Tests.UseCase
 {
@@ -22,11 +23,8 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void ShipApprovedOrder()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Approved,
-                Id = 1
-            };
+            var initialOrder = Order().WithStatus(OrderStatus.Approved).Build();
+
             _orderRepository.AddOrder(initialOrder);
 
             var request = new OrderShipmentRequest
@@ -43,11 +41,8 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void CreatedOrdersCannotBeShipped()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
+            var initialOrder = Order().WithStatus(OrderStatus.Created).Build();
+
             _orderRepository.AddOrder(initialOrder);
 
             var request = new OrderShipmentRequest
@@ -65,11 +60,8 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void RejectedOrdersCannotBeShipped()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Rejected,
-                Id = 1
-            };
+            var initialOrder = Order().WithStatus(OrderStatus.Rejected).Build();
+
             _orderRepository.AddOrder(initialOrder);
 
             var request = new OrderShipmentRequest
@@ -87,11 +79,8 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void ShippedOrdersCannotBeShippedAgain()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Shipped,
-                Id = 1
-            };
+            var initialOrder = Order().WithStatus(OrderStatus.Shipped).Build();
+
             _orderRepository.AddOrder(initialOrder);
 
             var request = new OrderShipmentRequest
