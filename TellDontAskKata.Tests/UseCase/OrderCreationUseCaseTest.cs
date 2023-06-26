@@ -88,6 +88,6 @@ public class OrderCreationUseCaseTest
 
         _useCase.Run(items)
             .Should()
-            .Be(new UnknownProduct("unknown product"));
+            .Be(new UnknownProducts("Unknown product(s): unknown product"));
     }
 }

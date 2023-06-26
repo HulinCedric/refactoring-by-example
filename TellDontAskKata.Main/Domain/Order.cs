@@ -44,7 +44,7 @@ public class Order
         return this;
     }
 
-    public static Either<UnknownProduct, Order> CreateOrder(
+    public static Either<UnknownProducts, Order> CreateOrder(
         IProductCatalog productCatalog,
         List<CreateOrderItem> itemRequests)
     {
@@ -65,8 +65,8 @@ public class Order
             .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
             .ToArray();
 
-    private static UnknownProduct ToFailure(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
-        => orderItems.Lefts().First();
+    private static UnknownProducts ToFailure(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
+        => new(orderItems.Lefts());
 
     private static bool ContainFailure(IEnumerable<Either<UnknownProduct, OrderItem>> orderItems)
         => orderItems.Lefts().Any();
