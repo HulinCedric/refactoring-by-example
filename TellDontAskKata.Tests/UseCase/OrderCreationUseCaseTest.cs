@@ -47,9 +47,10 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void SellMultipleItems()
         {
-            var items = new Dictionary<string, int>()
+            var items = new List<CreateOrderItem>
             {
-                {"salad", 2}, {"tomato", 3}
+                new("salad", 2),
+                new("tomato", 3)
             };
 
             _useCase.Run(items);
@@ -75,9 +76,9 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void UnknownProduct()
         {
-            var items = new Dictionary<string, int>()
+            var items = new List<CreateOrderItem>
             {
-                {"unknown product", 0}
+                new("unknown product", 0)
             };
 
 
@@ -86,4 +87,5 @@ namespace TellDontAskKata.Tests.UseCase
             Throws<UnknownProductException>(ActionToTest);
         }
     }
+
 }
