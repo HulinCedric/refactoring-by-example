@@ -48,16 +48,28 @@ public class Order
         IProductCatalog productCatalog,
         List<CreateOrderItem> itemRequests)
     {
-        var orderItems = itemRequests
+        var orderItems = ToOrderItems(productCatalog, itemRequests);
+        return ContainFailure(orderItems) ?
+                   ToFailure(orderItems) :
+                   ToSuccess(orderItems);
+    }
+
+    private static Order ToSuccess(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+        => orderItems.Rights()
+            .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
+
+    private static Either<UnknownProductException, OrderItem>[] ToOrderItems(
+        IProductCatalog productCatalog,
+        IEnumerable<CreateOrderItem> itemRequests)
+        => itemRequests
             .Select(itemRequest => NewOrderItem(productCatalog, itemRequest))
             .ToArray();
 
-        if (orderItems.Lefts().Any())
-            return orderItems.Lefts().First();
+    private static UnknownProductException ToFailure(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+        => orderItems.Lefts().First();
 
-        return orderItems.Rights()
-            .Aggregate(NewOrder(), (order, item) => order.AddItem(item));
-    }
+    private static bool ContainFailure(IEnumerable<Either<UnknownProductException, OrderItem>> orderItems)
+        => orderItems.Lefts().Any();
 
     public void Approve(OrderApprovalRequest request)
     {
