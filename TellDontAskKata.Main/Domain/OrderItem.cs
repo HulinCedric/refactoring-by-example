@@ -1,5 +1,4 @@
-﻿using System;
-using TellDontAskKata.Main.UseCase;
+﻿using TellDontAskKata.Main.UseCase;
 
 namespace TellDontAskKata.Main.Domain;
 
@@ -12,8 +11,8 @@ public class OrderItem
 
         Product = product;
         Quantity = quantity;
-        Tax = Round(unitaryTax * quantity);
-        TaxedAmount = Round(unitaryTaxedAmount * quantity);
+        Tax = (unitaryTax * quantity).Round();
+        TaxedAmount = (unitaryTaxedAmount * quantity).Round();
     }
 
     public Product Product { get; }
@@ -22,16 +21,13 @@ public class OrderItem
     public decimal TaxedAmount { get; }
 
     private static decimal GetUnitaryTaxedAmount(Product product, decimal unitaryTax)
-        => Round(product.Price + unitaryTax);
+        => (product.Price + unitaryTax).Round();
 
     private static decimal GetUnitaryTax(Product product)
-        => Round(product.Price / 100m * product.Category.TaxPercentage);
+        => (product.Price / 100m * product.Category.TaxPercentage).Round();
 
     public static OrderItem CreateOrderItem(CreateOrderItem item, Product product)
         => new(
             product: product,
             quantity: item.Quantity);
-
-    private static decimal Round(decimal amount)
-        => decimal.Round(amount, 2, MidpointRounding.ToPositiveInfinity);
 }
