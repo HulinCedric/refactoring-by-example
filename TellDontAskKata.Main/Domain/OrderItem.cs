@@ -21,10 +21,10 @@ namespace TellDontAskKata.Main.Domain
             return new OrderItem(product, quantity);
         }
 
-        public Product Product { get; init; }
-        public int Quantity { get; init; }
-        public decimal TaxedAmount { get; init; }
-        public decimal Tax { get; init; }
+        public Product Product { get; }
+        public int Quantity { get; }
+        public decimal TaxedAmount { get; }
+        public decimal Tax { get; }
 
         private static decimal GetTaxAmount(decimal unitaryTax, int quantity)
             => (unitaryTax * quantity).Round();
