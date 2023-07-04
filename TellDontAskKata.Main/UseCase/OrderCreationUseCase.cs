@@ -5,6 +5,14 @@ using static TellDontAskKata.Main.Domain.OrderStatus;
 
 namespace TellDontAskKata.Main.UseCase
 {
+    public static class DecimalExtensions
+    {
+        public static decimal Round(this decimal amount)
+        {
+            return decimal.Round(amount, 2, System.MidpointRounding.ToPositiveInfinity);
+        }
+    }
+
     public class OrderCreationUseCase
     {
         private readonly IOrderRepository _orderRepository;
@@ -38,10 +46,10 @@ namespace TellDontAskKata.Main.UseCase
                     throw new UnknownProductException();
                 }
 
-                var unitaryTax = Round((product.Price / 100m) * product.Category.TaxPercentage);
-                var unitaryTaxedAmount = Round(product.Price + unitaryTax);
-                var taxedAmount = Round(unitaryTaxedAmount * itemRequest.Value);
-                var taxAmount = Round(unitaryTax * itemRequest.Value);
+                var unitaryTax = ((product.Price / 100m) * product.Category.TaxPercentage).Round();
+                var unitaryTaxedAmount = (product.Price + unitaryTax).Round();
+                var taxedAmount = (unitaryTaxedAmount * itemRequest.Value).Round();
+                var taxAmount = (unitaryTax * itemRequest.Value).Round();
 
                 var orderItem = new OrderItem
                 {
@@ -56,11 +64,6 @@ namespace TellDontAskKata.Main.UseCase
             }
 
             _orderRepository.Save(order);
-        }
-
-        private static decimal Round(decimal amount)
-        {
-            return decimal.Round(amount, 2, System.MidpointRounding.ToPositiveInfinity);
         }
     }
 }
