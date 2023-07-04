@@ -16,10 +16,10 @@ namespace TellDontAskKata.Main.Domain
         public static Order NewOrder()
             => new();
 
-        public decimal Total { get; set; }
-        public string Currency { get; init; }
-        public IList<OrderItem> Items { get; init; }
-        public decimal Tax { get; set; }
+        public decimal Total { get; private set; }
+        public string Currency { get; }
+        public IList<OrderItem> Items { get; }
+        public decimal Tax { get; private set; }
         public OrderStatus Status { get; set; }
         public int Id { get; init; }
 
