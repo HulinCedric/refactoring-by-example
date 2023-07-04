@@ -46,8 +46,8 @@ namespace TellDontAskKata.Main.UseCase
                     throw new UnknownProductException();
                 }
 
-                var unitaryTax = ((product.Price / 100m) * product.Category.TaxPercentage).Round();
-                var unitaryTaxedAmount = (product.Price + unitaryTax).Round();
+                var unitaryTax = product.GetUnitaryTax();
+                var unitaryTaxedAmount = product.GetUnitaryTaxedAmount();
                 var taxedAmount = (unitaryTaxedAmount * itemRequest.Value).Round();
                 var taxAmount = (unitaryTax * itemRequest.Value).Round();
 
