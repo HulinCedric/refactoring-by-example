@@ -11,6 +11,7 @@ namespace TellDontAskKata.Tests.UseCase
     public class OrderCreationUseCaseTest
     {
         private readonly TestOrderRepository _orderRepository;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly IProductCatalog _productCatalog;
         private readonly OrderCreationUseCase _useCase;
 
@@ -82,6 +83,7 @@ namespace TellDontAskKata.Tests.UseCase
             };
 
 
+            // ReSharper disable once InconsistentNaming
             void actionToTest() => _useCase.Run(items);
 
             Throws<UnknownProductException>(actionToTest);

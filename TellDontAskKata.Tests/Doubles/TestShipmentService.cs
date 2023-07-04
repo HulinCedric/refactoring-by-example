@@ -5,7 +5,7 @@ namespace TellDontAskKata.Tests.Doubles
 {
     public class TestShipmentService : IShipmentService
     {
-        private Order _shippedOrder = null;
+        private Order _shippedOrder;
 
         public void Ship(Order order)
         {
