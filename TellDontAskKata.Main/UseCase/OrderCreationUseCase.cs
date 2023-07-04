@@ -35,9 +35,7 @@ namespace TellDontAskKata.Main.UseCase
             {
                 var orderItem = GetOrderItem(_productCatalog, itemRequest);
 
-                order.Items.Add(orderItem);
-                order.Total += orderItem.TaxedAmount;
-                order.Tax += orderItem.Tax;
+                order.Add(orderItem);
             }
 
             _orderRepository.Save(order);

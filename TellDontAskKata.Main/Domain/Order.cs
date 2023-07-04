@@ -22,5 +22,12 @@ namespace TellDontAskKata.Main.Domain
         public decimal Tax { get; set; }
         public OrderStatus Status { get; set; }
         public int Id { get; init; }
+
+        public void Add(OrderItem orderItem)
+        {
+            Items.Add(orderItem);
+            Total += orderItem.TaxedAmount;
+            Tax += orderItem.Tax;
+        }
     }
 }
