@@ -27,10 +27,8 @@ namespace TellDontAskKata.Main.UseCase
             _productCatalog = productCatalog;
         }
 
-        public void Run(List<ItemRequest> newItems)
+        public void Run(List<ItemRequest> items)
         {
-            Dictionary<string, int> items = newItems.ToDictionary(i => i.ProductName, i => i.Quantity);
-            
             var order = new Order
             {
                 Status = Created,
@@ -42,7 +40,7 @@ namespace TellDontAskKata.Main.UseCase
 
             foreach (var itemRequest in items)
             {
-                var product = _productCatalog.GetByName(itemRequest.Key);
+                var product = _productCatalog.GetByName(itemRequest.ProductName);
 
                 if (product == null)
                 {
@@ -51,13 +49,13 @@ namespace TellDontAskKata.Main.UseCase
 
                 var unitaryTax = product.GetUnitaryTax();
                 var unitaryTaxedAmount = product.GetUnitaryTaxedAmount();
-                var taxedAmount = (unitaryTaxedAmount * itemRequest.Value).Round();
-                var taxAmount = (unitaryTax * itemRequest.Value).Round();
+                var taxedAmount = (unitaryTaxedAmount * itemRequest.Quantity).Round();
+                var taxAmount = (unitaryTax * itemRequest.Quantity).Round();
 
                 var orderItem = new OrderItem
                 {
                     Product = product,
-                    Quantity = itemRequest.Value,
+                    Quantity = itemRequest.Quantity,
                     Tax = taxAmount,
                     TaxedAmount = taxedAmount
                 };
