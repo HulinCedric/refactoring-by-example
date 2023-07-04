@@ -40,19 +40,8 @@ namespace TellDontAskKata.Main.UseCase
                     throw new UnknownProductException();
                 }
 
-                var unitaryTax = product.GetUnitaryTax();
-                var unitaryTaxedAmount = product.GetUnitaryTaxedAmount();
-                var taxedAmount = (unitaryTaxedAmount * itemRequest.Quantity).Round();
-                var taxAmount = (unitaryTax * itemRequest.Quantity).Round();
+                var orderItem = OrderItem.New(product: product, quantity: itemRequest.Quantity);
 
-                var orderItem = new OrderItem
-                {
-                    Product = product,
-                    Quantity = itemRequest.Quantity,
-                    Tax = taxAmount,
-                    TaxedAmount = taxedAmount
-                };
-                
                 order.Items.Add(orderItem);
                 order.Total += orderItem.TaxedAmount;
                 order.Tax += orderItem.Tax;
@@ -61,7 +50,6 @@ namespace TellDontAskKata.Main.UseCase
             _orderRepository.Save(order);
         }
     }
-    
-    public record ItemRequest(string ProductName, int Quantity);
 
+    public record ItemRequest(string ProductName, int Quantity);
 }
