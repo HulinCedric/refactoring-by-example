@@ -32,7 +32,7 @@ namespace TellDontAskKata.Main.Domain
         private static decimal GetTaxedAmount(decimal unitaryTaxedAmount, int quantity)
             => (unitaryTaxedAmount * quantity).Round();
 
-        public static OrderItem GetOrderItem(IProductCatalog productCatalog, ItemRequest itemRequest)
+        public static OrderItem CreateItem(IProductCatalog productCatalog, ItemRequest itemRequest)
         {
             var product = productCatalog.GetByName(itemRequest.ProductName);
 
@@ -41,7 +41,7 @@ namespace TellDontAskKata.Main.Domain
                 throw new UnknownProductException();
             }
 
-            return OrderItem.New(product: product, quantity: itemRequest.Quantity);
+            return New(product: product, quantity: itemRequest.Quantity);
         }
     }
 }

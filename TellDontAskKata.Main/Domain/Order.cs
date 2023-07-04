@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TellDontAskKata.Main.Repository;
 using TellDontAskKata.Main.UseCase;
+using static TellDontAskKata.Main.Domain.OrderItem;
 
 namespace TellDontAskKata.Main.Domain
 {
@@ -38,9 +39,7 @@ namespace TellDontAskKata.Main.Domain
 
             foreach (var itemRequest in items)
             {
-                var orderItem = OrderItem.GetOrderItem(productCatalog, itemRequest);
-
-                order.Add(orderItem);
+                order.Add(CreateItem(productCatalog, itemRequest));
             }
 
             return order;
