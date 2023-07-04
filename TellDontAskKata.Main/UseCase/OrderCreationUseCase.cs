@@ -29,14 +29,7 @@ namespace TellDontAskKata.Main.UseCase
 
         public void Run(List<ItemRequest> items)
         {
-            var order = new Order
-            {
-                Status = Created,
-                Items = new List<OrderItem>(),
-                Currency = "EUR",
-                Total = 0m,
-                Tax = 0m
-            };
+            var order = Order.NewOrder();
 
             foreach (var itemRequest in items)
             {
@@ -59,6 +52,7 @@ namespace TellDontAskKata.Main.UseCase
                     Tax = taxAmount,
                     TaxedAmount = taxedAmount
                 };
+                
                 order.Items.Add(orderItem);
                 order.Total += taxedAmount;
                 order.Tax += taxAmount;
