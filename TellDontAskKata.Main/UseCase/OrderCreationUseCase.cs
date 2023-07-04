@@ -54,8 +54,8 @@ namespace TellDontAskKata.Main.UseCase
                 };
                 
                 order.Items.Add(orderItem);
-                order.Total += taxedAmount;
-                order.Tax += taxAmount;
+                order.Total += orderItem.TaxedAmount;
+                order.Tax += orderItem.Tax;
             }
 
             _orderRepository.Save(order);
