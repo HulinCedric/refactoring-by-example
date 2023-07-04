@@ -33,14 +33,7 @@ namespace TellDontAskKata.Main.UseCase
 
             foreach (var itemRequest in items)
             {
-                var product = _productCatalog.GetByName(itemRequest.ProductName);
-
-                if (product == null)
-                {
-                    throw new UnknownProductException();
-                }
-
-                var orderItem = OrderItem.New(product: product, quantity: itemRequest.Quantity);
+                var orderItem = GetOrderItem(_productCatalog, itemRequest);
 
                 order.Items.Add(orderItem);
                 order.Total += orderItem.TaxedAmount;
@@ -48,6 +41,18 @@ namespace TellDontAskKata.Main.UseCase
             }
 
             _orderRepository.Save(order);
+        }
+
+        private static OrderItem GetOrderItem(IProductCatalog productCatalog, ItemRequest itemRequest)
+        {
+            var product = productCatalog.GetByName(itemRequest.ProductName);
+
+            if (product == null)
+            {
+                throw new UnknownProductException();
+            }
+
+            return OrderItem.New(product: product, quantity: itemRequest.Quantity);
         }
     }
 
