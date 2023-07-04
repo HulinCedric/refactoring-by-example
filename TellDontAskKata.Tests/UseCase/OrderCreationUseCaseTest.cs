@@ -54,7 +54,13 @@ namespace TellDontAskKata.Tests.UseCase
                 {"salad", 2}, {"tomato", 3}
             };
 
-            _useCase.Run(items);
+            var newItems = new List<ItemRequest>()
+            {
+                new("salad", 2),
+                new("tomato", 3)
+            };
+
+            _useCase.Run(newItems);
 
             var insertedOrder = _orderRepository.GetSavedOrder();
             Equal(OrderStatus.Created, insertedOrder.Status);
@@ -84,9 +90,10 @@ namespace TellDontAskKata.Tests.UseCase
 
 
             // ReSharper disable once InconsistentNaming
-            void actionToTest() => _useCase.Run(items);
+            void actionToTest() => _useCase.RunOld(items);
 
             Throws<UnknownProductException>(actionToTest);
         }
     }
+
 }

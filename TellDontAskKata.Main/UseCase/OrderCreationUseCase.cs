@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TellDontAskKata.Main.Domain;
 using TellDontAskKata.Main.Repository;
 using static TellDontAskKata.Main.Domain.OrderStatus;
@@ -26,7 +27,7 @@ namespace TellDontAskKata.Main.UseCase
             _productCatalog = productCatalog;
         }
 
-        public void Run(Dictionary<string, int> items)
+        public void RunOld(Dictionary<string, int> items)
         {
             var order = new Order
             {
@@ -65,5 +66,13 @@ namespace TellDontAskKata.Main.UseCase
 
             _orderRepository.Save(order);
         }
+
+        public void Run(List<ItemRequest> newItems)
+        {
+           RunOld(newItems.ToDictionary(i => i.ProductName, i => i.Quantity));
+        }
     }
+    
+    public record ItemRequest(string ProductName, int Quantity);
+
 }
