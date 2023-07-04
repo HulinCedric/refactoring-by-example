@@ -27,8 +27,10 @@ namespace TellDontAskKata.Main.UseCase
             _productCatalog = productCatalog;
         }
 
-        public void RunOld(Dictionary<string, int> items)
+        public void Run(List<ItemRequest> newItems)
         {
+            Dictionary<string, int> items = newItems.ToDictionary(i => i.ProductName, i => i.Quantity);
+            
             var order = new Order
             {
                 Status = Created,
@@ -65,11 +67,6 @@ namespace TellDontAskKata.Main.UseCase
             }
 
             _orderRepository.Save(order);
-        }
-
-        public void Run(List<ItemRequest> newItems)
-        {
-           RunOld(newItems.ToDictionary(i => i.ProductName, i => i.Quantity));
         }
     }
     
