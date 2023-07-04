@@ -83,14 +83,14 @@ namespace TellDontAskKata.Tests.UseCase
         [Fact]
         public void UnknownProduct()
         {
-            var items = new Dictionary<string, int>()
+            var items = new List<ItemRequest>()
             {
-                {"unknown product", 0}
+                new ("unknown product", 0)
             };
 
 
             // ReSharper disable once InconsistentNaming
-            void actionToTest() => _useCase.RunOld(items);
+            void actionToTest() => _useCase.Run(items);
 
             Throws<UnknownProductException>(actionToTest);
         }
