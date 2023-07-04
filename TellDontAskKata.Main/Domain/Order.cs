@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using TellDontAskKata.Main.Repository;
+using TellDontAskKata.Main.UseCase;
 
 namespace TellDontAskKata.Main.Domain
 {
@@ -28,6 +30,20 @@ namespace TellDontAskKata.Main.Domain
             Items.Add(orderItem);
             Total += orderItem.TaxedAmount;
             Tax += orderItem.Tax;
+        }
+
+        public static Order CreateOrder(IProductCatalog productCatalog, List<ItemRequest> items)
+        {
+            var order = NewOrder();
+
+            foreach (var itemRequest in items)
+            {
+                var orderItem = OrderItem.GetOrderItem(productCatalog, itemRequest);
+
+                order.Add(orderItem);
+            }
+
+            return order;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TellDontAskKata.Main.UseCase;
+﻿using TellDontAskKata.Main.Repository;
+using TellDontAskKata.Main.UseCase;
 
 namespace TellDontAskKata.Main.Domain
 {
@@ -30,5 +31,17 @@ namespace TellDontAskKata.Main.Domain
 
         private static decimal GetTaxedAmount(decimal unitaryTaxedAmount, int quantity)
             => (unitaryTaxedAmount * quantity).Round();
+
+        public static OrderItem GetOrderItem(IProductCatalog productCatalog, ItemRequest itemRequest)
+        {
+            var product = productCatalog.GetByName(itemRequest.ProductName);
+
+            if (product == null)
+            {
+                throw new UnknownProductException();
+            }
+
+            return OrderItem.New(product: product, quantity: itemRequest.Quantity);
+        }
     }
 }

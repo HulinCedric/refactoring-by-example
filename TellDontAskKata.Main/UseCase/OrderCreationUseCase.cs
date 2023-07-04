@@ -29,28 +29,9 @@ namespace TellDontAskKata.Main.UseCase
 
         public void Run(List<ItemRequest> items)
         {
-            var order = Order.NewOrder();
-
-            foreach (var itemRequest in items)
-            {
-                var orderItem = GetOrderItem(_productCatalog, itemRequest);
-
-                order.Add(orderItem);
-            }
+            var order = Order.CreateOrder(_productCatalog, items);
 
             _orderRepository.Save(order);
-        }
-
-        private static OrderItem GetOrderItem(IProductCatalog productCatalog, ItemRequest itemRequest)
-        {
-            var product = productCatalog.GetByName(itemRequest.ProductName);
-
-            if (product == null)
-            {
-                throw new UnknownProductException();
-            }
-
-            return OrderItem.New(product: product, quantity: itemRequest.Quantity);
         }
     }
 
